@@ -1,5 +1,8 @@
 import random
 
+def find_key(dict, value):
+    return list(dict.keys())[list(dict.values()).index(value)]
+
 def generate_solution(colors):
     solution = ["", "", "", ""]
     used_colors = []
@@ -17,11 +20,11 @@ def generate_solution(colors):
 
 def print_colors(colors, shorthands):
     print("Available colours:")
-    for color in colors:        
-        if color == "black":
-            print(f"  blac[k]")
-        else:
-            print(f"  [{color[0]}]{color[1:]}")
+    for color in colors:
+        shorthand = find_key(shorthands, color)
+        index = color.index(shorthand)
+        processed_color = "  " + color[:index] + f"[{shorthand}]" + color[index+1:]
+        print(processed_color)
     print()
 
 dev = True
