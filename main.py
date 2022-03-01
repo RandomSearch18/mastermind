@@ -18,6 +18,15 @@ def generate_solution(colors):
 
     return solution
 
+def calculate_correct_colors(attempt, solution):
+    correct_colors = 0
+    for correct_color in solution:
+        # if `attempt` contains the color that we're checking for,
+        # increment `correct_colors`
+        if attempt.count(correct_color):
+            correct_colors += 1
+    return correct_colors
+
 def print_colors(colors, shorthands):
     print("Available colours:")
     for color in colors:
@@ -26,6 +35,13 @@ def print_colors(colors, shorthands):
         processed_color = "  " + color[:index] + f"[{shorthand}]" + color[index+1:]
         print(processed_color)
     print()
+
+def display_topbar(current_attempt, total_attempts):
+    print(f"====| ATTEMPT {current_attempt}/{total_attempts} |====")
+
+def display_bottombar(correct_colors, correct_placements):
+    print(f" ⚪ Correct colours:   ", correct_colors)
+    print(f" ⚫ Correct placements:", correct_placements)
 
 dev = True
 MAX_ATTEMPTS = 10
@@ -58,8 +74,7 @@ while attempt != solution:
         game_over = True
         break
 
-    # Display the statusbar
-    print(f"===| {attempts}/{MAX_ATTEMPTS} |===========| ⚪ {correct_colors}   ⚫ {correct_placements} |===")
+    display_topbar(attempts, MAX_ATTEMPTS)
 
     # Reset `position` to 0
     position = 0
@@ -90,18 +105,9 @@ while attempt != solution:
             last_response_was_valid = False
 
 
-    ## UPDATE STATISTICS ##
-
-    # Reset everything to 0
-    correct_colors = 0
+    # UPDATE STATISTICS
+    correct_colors = calculate_correct_colors(attempt, solution)
     correct_placements = 0
-
-    # Update `correct_colors`
-    for correct_color in solution:
-        # if `attempt` contains the color that we're checking for,
-        # increment `correct_colors`
-        if attempt.count(correct_color):
-            correct_colors += 1
 
     # Update `correct_placements`
     i = 0
@@ -114,6 +120,8 @@ while attempt != solution:
             correct_colors -= 1
         i += 1
 
+    display_bottombar(correct_colors, correct_placements)
+    
     print()
 print()
 
