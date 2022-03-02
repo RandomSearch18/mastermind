@@ -20,12 +20,23 @@ def generate_solution(colors):
 
 def calculate_correct_colors(attempt, solution):
     correct_colors = 0
+    i = 0
     for correct_color in solution:
         # if `attempt` contains the color that we're checking for,
-        # increment `correct_colors`
-        if attempt.count(correct_color):
+        # then increment `correct_colors`, unless it is also correctly-placed
+        if attempt.count(correct_color) and correct_color != attempt[i]:
             correct_colors += 1
+        i += 1
     return correct_colors
+
+def calculate_correct_placements(attempt, solution):
+    correct_placements = 0
+    i = 0
+    for attempted_color in attempt:
+        if solution[i] == attempted_color:
+            correct_placements += 1
+        i += 1
+    return correct_placements
 
 def print_colors(colors, shorthands):
     print("Available colours:")
@@ -37,11 +48,12 @@ def print_colors(colors, shorthands):
     print()
 
 def display_topbar(current_attempt, total_attempts):
-    print(f"====| ATTEMPT {current_attempt}/{total_attempts} |====")
+    print(f"=====| ATTEMPT {current_attempt}/{total_attempts} |=====")
 
 def display_bottombar(correct_colors, correct_placements):
     print(f" ⚪ Correct colours:   ", correct_colors)
     print(f" ⚫ Correct placements:", correct_placements)
+    print()
 
 dev = True
 MAX_ATTEMPTS = 10
@@ -105,24 +117,11 @@ while attempt != solution:
             last_response_was_valid = False
 
 
-    # UPDATE STATISTICS
+    # Re-calculate statistics
     correct_colors = calculate_correct_colors(attempt, solution)
-    correct_placements = 0
-
-    # Update `correct_placements`
-    i = 0
-    for attempted_color in attempt:
-        if solution[i] == attempted_color:
-            # Increment `correct_placements`, and
-            # decrement `correct_colors` so that
-            # the 'pin' isn't counted twice
-            correct_placements += 1
-            correct_colors -= 1
-        i += 1
+    correct_placements = calculate_correct_placements(attempt, solution)
 
     display_bottombar(correct_colors, correct_placements)
-    
-    print()
 print()
 
 if game_over:
