@@ -55,6 +55,41 @@ def display_bottombar(correct_colors, correct_placements):
     print(f" ⚫ Correct placements:", correct_placements)
     print()
 
+def config_max_attempts():
+    print("yes")
+
+def show_config_screen():
+    def add_action(name, function = None):
+        actions.append({"name": name, "function": function})
+    
+    actions = []
+    
+    print("CUSTOMISE YOUR GAME OF MASTERMIND:")
+    add_action("Change maximum attempts", config_max_attempts)
+    add_action("Change board width")
+    add_action("Disable shorthands")
+
+    print("  0. Finish customising and start the game")
+    i = 0
+    for action in actions:
+        name = action["name"]
+        print(f"  {i+1}. {name}...")
+        i += 1
+    
+    chosen_action = int(input("> ")) - 1
+    if chosen_action == -1: return
+    if chosen_action > len(actions):
+        print("Not a valid option! Enter a number from the list, or 0 to exit.")
+        print()
+        show_config_screen()
+
+    print(actions[chosen_action])
+    print()
+    actions[chosen_action]["function"]()
+    print()
+    print()
+    show_config_screen()
+
 dev = True
 MAX_ATTEMPTS = 10
 colors = ["blue", "green", "black", "red", "yellow", "white"]
@@ -73,6 +108,7 @@ shorthands = {
     "w": "white"
 }
 
+show_config_screen()
 solution = generate_solution(colors)
 print_colors(colors, shorthands)
 if dev: print("The solution is:", solution, "\n")
@@ -91,12 +127,7 @@ while attempt != solution:
     # Reset `position` to 0
     position = 0
     while position <= 3:
-        if last_response_was_valid:
-            tag = " "
-        else:
-            # This will show an exclamation mark before the prompt,
-            # to tell them that their last input was invalid
-            tag = "!"
+        tag = " " if last_response_was_valid else "!"
 
         # Display the prompt, to let the user input their colour
         attempt[position] = input(f"{tag}{position+1}> ").lower()
@@ -105,7 +136,6 @@ while attempt != solution:
         if len(attempt[position]) == 1:
             if attempt[position] in shorthands:
                 attempt[position] = shorthands[attempt[position]]
-
 
         # Mark the response as valid if the user inputted a valid colour
         # TODO: Don't let the user put the same colour in multiple positions?
