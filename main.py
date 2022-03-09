@@ -3,6 +3,18 @@ import random
 def find_key(dict, value):
     return list(dict.keys())[list(dict.values()).index(value)]
 
+def clear(): print("\033[H\033[J", end="")
+
+def yesno(text, default):
+    text = text.lower()
+    if text[0] == "y": return True
+    if text[0] == "n": return False
+    if text == "true": return True
+    if text == "false": return False
+    if text == "1": return True
+    if text == "0": return False
+    return default
+
 def generate_solution(colors):
     solution = ["", "", "", ""]
     used_colors = []
@@ -56,18 +68,30 @@ def display_bottombar(correct_colors, correct_placements):
     print()
 
 def config_max_attempts():
-    print("yes")
+    global max_attempts
+    print("Current maximum attempts:", max_attempts)
+    max_attempts = int(input("New maximum attempts: "))
+
+def config_inline_inputs():
+    global use_inline_input
+    print("'Inline input' lets you write your guess on a single line.")
+    print("You type your guess by seperating each colour with a comma.")
+    print("Inline input is currently:", "Enabled" if use_inline_input else "Disabled")
+    print()
+    use_inline_input = yesno(input("Do you want to use inline input? "), use_inline_input)
 
 def show_config_screen():
     def add_action(name, function = None):
         actions.append({"name": name, "function": function})
-    
+
     actions = []
-    
+
+    clear()
     print("CUSTOMISE YOUR GAME OF MASTERMIND:")
     add_action("Change maximum attempts", config_max_attempts)
     add_action("Change board width")
     add_action("Disable shorthands")
+    add_action("Configure inline colour input", config_inline_inputs)
 
     print("  0. Finish customising and start the game")
     i = 0
@@ -77,21 +101,20 @@ def show_config_screen():
         i += 1
     
     chosen_action = int(input("> ")) - 1
-    if chosen_action == -1: return
+    if chosen_action == -1: return clear()
     if chosen_action > len(actions):
         print("Not a valid option! Enter a number from the list, or 0 to exit.")
         print()
         show_config_screen()
 
-    print(actions[chosen_action])
-    print()
+    clear()
     actions[chosen_action]["function"]()
-    print()
-    print()
+    input("Done! Press enter to continue...")
     show_config_screen()
 
 dev = True
-MAX_ATTEMPTS = 10
+max_attempts = 10
+use_inline_input = False
 colors = ["blue", "green", "black", "red", "yellow", "white"]
 attempt = ["", "", "", ""]
 attempts = 0
@@ -118,11 +141,11 @@ while attempt != solution:
     attempts += 1
 
     # Check if the user has run out of turns
-    if attempts > MAX_ATTEMPTS:
+    if attempts > max_attempts:
         game_over = True
         break
 
-    display_topbar(attempts, MAX_ATTEMPTS)
+    display_topbar(attempts, max_attempts)
 
     # Reset `position` to 0
     position = 0
