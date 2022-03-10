@@ -80,24 +80,47 @@ def config_inline_inputs():
     print()
     use_inline_input = yesno(input("Do you want to use inline input? "), use_inline_input)
 
+
+def config_board_width():
+    print("'Board width' represents the number of colours that the combination has")
+    print
+
+
 def show_config_screen():
     def add_action(name, function = None):
         actions.append({"name": name, "function": function})
 
+    def add_configured_action(name, key, default, title = None, description = None):
+        configured_actions.append({
+            "name": name,
+            "key": key,
+            "title": title or name,
+            "description": description
+        })
+
     actions = []
+    configured_actions = []
 
     clear()
     print("CUSTOMISE YOUR GAME OF MASTERMIND:")
     add_action("Change maximum attempts", config_max_attempts)
-    add_action("Change board width")
+    add_action("Change board width", config_board_width)
     add_action("Disable shorthands")
     add_action("Configure inline colour input", config_inline_inputs)
 
+    add_configured_action("Change maximum attempts", "max_attempts", 10)
+
     print("  0. Finish customising and start the game")
+    
     i = 0
     for action in actions:
         name = action["name"]
         print(f"  {i+1}. {name}...")
+        i += 1
+
+    i = 0
+    for action in configured_actions:
+        print(f"  {i+1}. {action['name']}")
         i += 1
     
     chosen_action = int(input("> ")) - 1
