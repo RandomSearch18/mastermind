@@ -31,6 +31,10 @@ def yesno(text, default):
     return default
 
 
+def text_bold(text):
+    return "\x1b[1m" + text + "\x1b[22m"
+
+
 def print_info(text):
     print("\x1b[36m" + "🛈  " + text + TEXT_RESET)
 
