@@ -32,19 +32,21 @@ def yesno(text, default):
 
 
 def print_info(text):
-    print(
-        "\x1b[36m" + "🛈  " + text + "\x1b[0m",
-    )
+    print("\x1b[36m" + "🛈  " + text + TEXT_RESET)
+
+
+def print_error(text):
+    print("\x1b[31m" + "🚫 " + text + TEXT_RESET)
 
 
 def warning_confirmation(text):
     user_input = input(
-        "\x1b[33m" + "⚠️  " + text + "\x1b[0m" + " ",
+        "\x1b[33m" + "⚠️  " + text + TEXT_RESET + " ",
     )
     result = yesno(user_input, None)
 
     if result == None:
-        print("\x1b[33m\n   " + "Type 'yes' or 'no' to confirm/decline:" + "\x1b[0m")
+        print("\x1b[33m\n   " + "Type 'yes' or 'no' to confirm/decline:" + TEXT_RESET)
         return warning_confirmation(text)
 
     return result
@@ -151,7 +153,8 @@ def validate_board_width(value):
     if value != 0:
         return True
 
-    print("🚫 You cannot have a board width of zero!")
+    print()
+    print_error("You cannot have a board width of zero!")
     input("Press enter keep original value...")
 
 
@@ -236,7 +239,7 @@ def show_config_screen():
         "Board width",
         "width",
         4,
-        description="'Board width' represents the number of colours that the combination has.\nIt is reccomended to keep it at the default for optimal gameplay, but you can change it if you're feeling adventurous.",
+        description="'Board width' represents the number of colours that the combination has.\nIt is recommended to keep it at the default for optimal gameplay, but you can change it if you're feeling adventurous.",
         validator=validate_board_width,
     )
     # add_action("Disable shorthands")
@@ -276,6 +279,8 @@ def show_config_screen():
         input("Value updated! Press enter to continue...")
     show_config_screen()
 
+
+TEXT_RESET = "\x1b[0m"
 
 dev = True
 max_attempts = 10
