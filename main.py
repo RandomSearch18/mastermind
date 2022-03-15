@@ -162,6 +162,16 @@ def validate_board_width(value):
     input("Press enter keep original value...")
 
 
+def process_boolean_value(value_map, value):
+    truthy_value = value_map[0]
+    falsy_value = value_map[1]
+
+    if value.lower() == truthy_value: return True
+    if value.lower() == falsy_value: return False
+
+    return yesno(value)
+
+
 def run_action(action, message=""):
     clear()
     print("==== " + action["title"].title() + " ====")
@@ -189,6 +199,17 @@ def run_action(action, message=""):
         else:
             return run_action(action, "Input needs to be a number!")
 
+    print(action["boolean"])
+    if action["boolean"] == True:
+        new_value = yesno(new_value, None)
+        if new_value == None:
+            return run_action(action, "Input needs to be a yes/no!")
+
+    if type(action["boolean"]) is list:
+        new_value = process_boolean_value(action["boolean"], new_value)
+        if new_value == None:
+            return run_action(action, "Input needs to be a yes/no!")
+
     if action["validator"]:
         keep_new_value = action["validator"](new_value)
         if not keep_new_value:
@@ -210,6 +231,7 @@ def show_config_screen():
         title=None,
         description=None,
         number=False,
+        boolean=False,
         validator=None,
         transformer=None,
     ):
@@ -222,6 +244,7 @@ def show_config_screen():
                 "text": title or f"Edit {name.lower()}",
                 "description": description,
                 "number": number or type(default) is int,
+                "boolean": boolean or type(default) is bool,
                 "validator": validator,
                 "transformer": transformer,
             }
@@ -230,7 +253,7 @@ def show_config_screen():
     actions = []
 
     clear()
-    print("\033[1m" + "CUSTOMISE YOUR GAME OF MASTERMIND" + "\033[0m" + "\n")
+    print(text_bold("CUSTOMISE YOUR GAME OF MASTERMIND") + "\n")
 
     add_action(
         "Maximum attempts",
@@ -246,8 +269,9 @@ def show_config_screen():
         description="'Board width' represents the number of colours that the combination has.\nIt is recommended to keep it at the default for optimal gameplay, but you can change it if you're feeling adventurous.",
         validator=validate_board_width,
     )
+    add_action("Inline colour input", "inline_input", False,
+              description="'Inline input' lets you write your guess on a single line.\nYou type your guess by seperating each colour with a comma.")
     # add_action("Disable shorthands")
-    # add_action("Configure inline colour input")
 
     print_info(
         "Press Enter to start the game, or enter a number to configure an option.\n"
